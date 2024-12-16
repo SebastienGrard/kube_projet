@@ -17,6 +17,13 @@ spec:
       containers:
         - name: webapp
           image: nanajanashia/k8s-demo-app:v1.0
+          volumeMounts:
+            - name: shared-logs
+              mountPath: /app/logs
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Test log $(date)" >> /app/logs/test.log && node server.js
           resources:
             requests:
               memory: "64Mi"
@@ -42,8 +49,12 @@ spec:
                 configMapKeyRef:
                   name: mongo-config
                   key: mongo-url
-        - name: log-aggregator
-          image: images.my-company.example/log-aggregator:v6
+        - name: alpine-log
+          image: alpine
+          command: ["/bin/sh", "-c", "tail -f /app/logs/*.log"]
+          volumeMounts:
+            - name: shared-logs
+              mountPath: /app/logs
           resources:
             requests:
               memory: "64Mi"
@@ -51,6 +62,9 @@ spec:
             limits:
               memory: "128Mi"
               cpu: "500m"
+      volumes:
+        - name: shared-logs
+          emptyDir: {}           
 ---
 apiVersion: v1
 kind: Service
