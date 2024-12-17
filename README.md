@@ -1,5 +1,7 @@
 # Kubernetes Project - Web Application with MongoDB
 
+La segmentation actuelle fait que l'utilisation des Namespace n'est pas obligatoire
+
 ## 📘 **Project Overview**
 This project consists of a Kubernetes deployment that runs a **web application** and a **MongoDB database**. The architecture ensures persistence of data, proper resource allocation, secure environment variables, and log sharing between containers.
 
@@ -13,9 +15,12 @@ The services are exposed using a **LoadBalancer** for the web application and an
 
 ## 📂 **Project Structure**
 ```
-├── webapp-deployment.yaml  # Deployment and Service configuration for the web app
-├── mongo-deployment.yaml   # Deployment and Service configuration for the MongoDB database
-└── README.md               # This documentation file
+├── mongo-config.yaml     # ConfigMap of the mongo service
+├── mongo-pvc.yaml        # Pv and PVC of mongo
+├── mongo-secret.yaml     # Secret of the mongo DB
+├── mongo.yaml            # Config of the mongo DB
+├── webapp.yaml           # Config of the webapp, and the log collector
+└── README.md             # This documentation file
 ```
 
 ---
@@ -24,13 +29,16 @@ The services are exposed using a **LoadBalancer** for the web application and an
 
 1. **Apply the MongoDB Deployment**
    ```bash
-   kubectl apply -f mongo-deployment.yaml
+   kubectl apply -f mongodb-secret.yaml
+   kubectl apply -f mongodb-config.yaml
+   kubectl apply -f mongo-pvc.yaml
+   kubectl apply -f mongodb.yaml
    ```
    This will create a **MongoDB Deployment** with a Persistent Volume Claim (PVC) to ensure that data is not lost if the pod is deleted or restarted.
 
 2. **Apply the Web Application Deployment**
    ```bash
-   kubectl apply -f webapp-deployment.yaml
+   kubectl apply -f webapp.yaml
    ```
    This will create a **Web Application Deployment** that is accessible via a LoadBalancer service.
 
@@ -54,20 +62,21 @@ The services are exposed using a **LoadBalancer** for the web application and an
 - **Image**: `nanajanashia/k8s-demo-app:v1.0`
 - **Ports**: 3000 (accessible via LoadBalancer)
 - **Volumes**: Uses a shared log volume (`emptyDir`) to persist logs between two containers in the same pod.
-- **Environment Variables**: Environment variables are loaded from **Secrets** and **ConfigMaps** for security.
 
 **Containers in Pod:**
 - **Web Application**: Runs `node server.js` and writes logs to `/app/logs/test.log`.
 - **Alpine Log Collector**: Runs `tail -f /app/logs/*.log` to continuously display log file changes.
 
+**Example Command to View Logs:**
+```bash
+kubectl logs <webapp-pod-name> -c alpine-log -f
+```
+
+![Capture d'écran 2024-12-17 095138](https://github.com/user-attachments/assets/922bab46-b891-44ce-b402-5771d239c602)
+
 **Resource Requests & Limits:**
 - **CPU**: Requests 250m, Limits 500m
 - **Memory**: Requests 64Mi, Limits 128Mi
-
-**Example Command to View Logs:**
-```bash
-kubectl logs <webapp-pod-name> -c alpine-log
-```
 
 **Service Details:**
 - **Type**: LoadBalancer (Exposes port 3000 to the outside world)
@@ -96,22 +105,6 @@ kubectl logs <webapp-pod-name> -c alpine-log
 ```bash
 kubectl logs <mongo-pod-name>
 ```
-
-**Check Data Persistence:**
-1. Create a file in the database directory:
-   ```bash
-   kubectl exec <mongo-pod-name> -- touch /data/db/test.log
-   ```
-2. Delete the MongoDB pod:
-   ```bash
-   kubectl delete pod <mongo-pod-name>
-   ```
-3. Wait for the pod to restart, then check if the file still exists:
-   ```bash
-   kubectl exec <mongo-pod-name> -- ls /data/db
-   ```
-   The `test.log` file should still be there, confirming persistence.
-
 ---
 
 ## 🔐 **Secrets and ConfigMaps**
@@ -181,20 +174,15 @@ kubectl create configmap mongo-config --from-literal=mongo-url=mongodb://admin:s
 ## 🧹 **Clean Up**
 To clean up the cluster resources, run:
 ```bash
-kubectl delete -f mongo-deployment.yaml
-kubectl delete -f webapp-deployment.yaml
+   kubectl delete -f mongodb-secret.yaml
+   kubectl delete -f mongodb-config.yaml
+   kubectl delete -f mongo-pvc.yaml
+   kubectl delete -f mongodb.yaml
+   kubectl delete -f webapp.yaml
 ```
 This will remove all pods, services, and persistent volumes created by this project.
 
 ---
-
-The webapp application will send a log with the current date of the deployment to the Alpine App.
-
-```bash
-kubectl logs webapp-deployment-f7c65fcb6-277np -c alpine-log -f
-```
-
-![Capture d'écran 2024-12-17 095138](https://github.com/user-attachments/assets/922bab46-b891-44ce-b402-5771d239c602)
 
 The Mongo pod will have the PV and the PVC attached to it.
 
@@ -206,9 +194,3 @@ kubectl describe pod mongo-deployment-XXXXXXXX
 
 ## 📜 **Authors & Contributors**
 This project was created by **Sébastien Grard** as part of a Kubernetes learning experience.
-
----
-
-## 📮 **Feedback & Support**
-If you encounter any issues with the deployment or have suggestions for improvements, please feel free to reach out or submit an issue on the project repository.
-
