@@ -188,6 +188,22 @@ This will remove all pods, services, and persistent volumes created by this proj
 
 ---
 
+The webapp application will send a log with the current date of the deployment to the Alpine App.
+
+```bash
+kubectl logs webapp-deployment-f7c65fcb6-277np -c alpine-log -f
+```
+
+![Capture d'écran 2024-12-17 095138](https://github.com/user-attachments/assets/922bab46-b891-44ce-b402-5771d239c602)
+
+The Mongo pod will have the PV and the PVC attached to it.
+
+```bash
+kubectl describe pod mongo-deployment-XXXXXXXX
+```
+![Capture d'écran 2024-12-17 095024](https://github.com/user-attachments/assets/13bdd0a7-7460-483e-ae82-bcbf48196941)
+
+
 ## 📜 **Authors & Contributors**
 This project was created by **Sébastien Grard** as part of a Kubernetes learning experience.
 
