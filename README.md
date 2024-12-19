@@ -32,10 +32,10 @@ The services are exposed using a **LoadBalancer** for the web application and an
 
 1. **Apply the MongoDB Deployment**
    ```bash
-   kubectl apply -f mongodb-secret.yaml
-   kubectl apply -f mongodb-config.yaml
+   kubectl apply -f mongo-secret.yaml
+   kubectl apply -f mongo-config.yaml
    kubectl apply -f mongo-pvc.yaml
-   kubectl apply -f mongodb.yaml
+   kubectl apply -f mongo.yaml
    ```
    This will create a **MongoDB Deployment** with a Persistent Volume Claim (PVC) to ensure that data is not lost if the pod is deleted or restarted.
 
@@ -177,10 +177,10 @@ kubectl create configmap mongo-config --from-literal=mongo-url=mongodb://admin:s
 ## 🧹 **Clean Up**
 To clean up the cluster resources, run:
 ```bash
-   kubectl delete -f mongodb-secret.yaml
-   kubectl delete -f mongodb-config.yaml
+   kubectl delete -f mongo-secret.yaml
+   kubectl delete -f mongo-config.yaml
    kubectl delete -f mongo-pvc.yaml
-   kubectl delete -f mongodb.yaml
+   kubectl delete -f mongo.yaml
    kubectl delete -f webapp.yaml
 ```
 This will remove all pods, services, and persistent volumes created by this project.
