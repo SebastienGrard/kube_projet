@@ -1,6 +1,9 @@
 # Kubernetes Project - Web Application with MongoDB
 
-La segmentation actuelle fait que l'utilisation des Namespace n'est pas obligatoire
+## NOTES : 
+
+- Le projet a été réalisé presque sans IA, uniquement pour la compréhension de concepts.
+- La segmentation actuelle fait que l'utilisation des Namespace n'est pas obligatoire selon moi.
 
 ## 📘 **Project Overview**
 This project consists of a Kubernetes deployment that runs a **web application** and a **MongoDB database**. The architecture ensures persistence of data, proper resource allocation, secure environment variables, and log sharing between containers.
