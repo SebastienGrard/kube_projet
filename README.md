@@ -2,7 +2,7 @@
 
 ## NOTES : 
 
-- Le projet a été réalisé presque sans IA, uniquement pour la compréhension de concepts.
+- Le projet a été réalisé presque sans IA, uniquement pour la compréhension de concepts, et l'édition du README.md.
 - La segmentation actuelle fait que l'utilisation des Namespace n'est pas obligatoire selon moi.
 
 ## 📘 **Project Overview**
